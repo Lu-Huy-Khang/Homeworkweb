@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>User Login</h1>
+    <form id="loginForm">
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="username"><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p id="message" style="color: red;"></p>
+
+    <p>Don't have an account? <a href="/views/Signup.ejs">Sign up here</a></p>
+
+    <script>
+        $(document).ready(function() {
+            $('#loginForm').on('submit', function(event) {
+                event.preventDefault();
+
+                const email = $('#username').val();
+                const password = $('#password').val();
+
+                if (!email || !password) {
+                    $('#message').text('Please fill in all fields.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ email, password }),
+                    success: function(response) {
+                        alert('Login successful! Welcome back.');
+                        $('#message').text('');
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 401) {
+                            $('#message').text('Invalid email or password.');
+                        } else {
+                            alert('An error occurred. Try again.');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

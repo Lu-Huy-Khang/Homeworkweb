@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form id="registrationForm">
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="username"><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword"><br><br>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="message" style="color: red;"></p>
+
+    <script>
+        $(document).ready(function() {
+            $('#registrationForm').on('submit', function(event) {
+                event.preventDefault(); // Stop the form from submitting
+
+                // Get form values
+                const email = $('#username').val();
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+
+                // Validate email
+                if (!email.includes('@') || !email.includes('.')) {
+                    $('#message').text('Email must be in a valid format.');
+                    return;
+                }
+
+                // Validate password length
+                if (password.length < 6) {
+                    $('#message').text('Password must be at least 6 characters long.');
+                    return;
+                }
+
+                // Check for at least one number and one special character
+                if (!/[0-9]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+                    $('#message').text('Password must contain at least one number and one special character.');
+                    return;
+                }
+
+                // Confirm passwords match
+                if (password !== confirmPassword) {
+                    $('#message').text('Passwords do not match.');
+                    return;
+                }
+
+                // If all validations pass
+                $('#message').text(''); // Clear any error message
+
+                // Send data to backend
+                $.ajax({
+                    url: '/register',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ email, password }),
+                    success: function() {
+                        alert('Registration successful!');
+                    },
+                    error: function() {
+                        alert('An error occurred. Try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
